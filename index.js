@@ -27,7 +27,7 @@ mongoose.Promise = global.Promise;
 app.post("/item", (req, res) => {
   const { search_item } = req.body;
   osge
-    .find({ name: search_item })
+    .find({ name: { $regex: search_item, $options: "i" } })
     .then(data =>
       axios
         .get(base_url + data[0].id)

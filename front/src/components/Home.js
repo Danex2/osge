@@ -7,7 +7,8 @@ class Home extends React.Component {
   state = {
     item: [],
     search_item: "",
-    loading: false
+    loading: false,
+    error: ""
   };
   handleChange = e => {
     this.setState({ [e.target.name]: e.target.value });
@@ -25,7 +26,8 @@ class Home extends React.Component {
     );
   };
   render() {
-    const { item, loading } = this.state;
+    const { item, loading, error } = this.state;
+    console.log(error);
     return (
       <div className="container input-form d-flex justify-content-center">
         <form onSubmit={this.onSubmit}>
@@ -47,19 +49,20 @@ class Home extends React.Component {
               </small>
             </div>
           </div>
+          {loading ? (
+            <Loading />
+          ) : (
+            Object.entries(item).map(val => {
+              return (
+                <React.Fragment key={val[1].id}>
+                  <h3>{val[1].name}</h3>
+                  <h4>{val[1].current.price}</h4>
+                  <img src={val[1].icon_large} alt="Runescape item" />
+                </React.Fragment>
+              );
+            })
+          )}
         </form>
-        {loading ? (
-          <Loading />
-        ) : (
-          Object.entries(item).map(val => {
-            return (
-              <React.Fragment key={val[1].id}>
-                <h1>{val[1].name}</h1>
-                <h1>{val[1].current.price}</h1>
-              </React.Fragment>
-            );
-          })
-        )}
       </div>
     );
   }

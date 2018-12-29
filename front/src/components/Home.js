@@ -20,7 +20,7 @@ class Home extends React.Component {
           search_item: this.state.search_item
         })
         .then(data => {
-          this.setState({ item: data.data.item, loading: true });
+          this.setState({ item: data.data, loading: false });
         })
     );
   };
@@ -47,16 +47,19 @@ class Home extends React.Component {
               </small>
             </div>
           </div>
-          {item.length === 0 && loading === true ? (
-            <Loading />
-          ) : (
-            <React.Fragment>
-              <img src={item.icon_large} alt="runescape item" />
-              <span className="text-muted">{item.name}</span>
-              <span className="text-muted">{item.current.price}</span>
-            </React.Fragment>
-          )}
         </form>
+        {loading ? (
+          <Loading />
+        ) : (
+          Object.entries(item).map(val => {
+            return (
+              <React.Fragment key={val[1].id}>
+                <h1>{val[1].name}</h1>
+                <h1>{val[1].current.price}</h1>
+              </React.Fragment>
+            );
+          })
+        )}
       </div>
     );
   }

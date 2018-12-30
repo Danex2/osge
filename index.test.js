@@ -20,4 +20,13 @@ describe("Testing /item route", () => {
         done();
       });
   });
+  test("It should return with a 404 for an item that does not exist", done => {
+    request(app)
+      .post("/item")
+      .send({ search_item: "afa,sf" })
+      .then(response => {
+        expect(response.status).toBe(404);
+        done();
+      });
+  });
 });

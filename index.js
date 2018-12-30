@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const morgan = require("morgan");
 const app = express();
+const path = require("path");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,23 +22,26 @@ const osge = mongoose.model("items", {
 const base_url =
   "http://services.runescape.com/m=itemdb_oldschool/api/catalogue/detail.json?item=";
 const connection = process.env.DATABASE;
-const PORT = 3030;
 mongoose.Promise = global.Promise;
 
 app.post("/item", (req, res) => {
   const { search_item } = req.body;
-  osge
-    .find({ name: { $regex: search_item, $options: "i" } })
-    .then(data =>
-      axios
-        .get(base_url + data[0].id)
-        .then(item => res.status(200).json(item.data))
-    )
-    .catch(err => {
-      if (err) {
-        res.status(404).json({ message: "Error: Item not found." });
-      }
-    });
+  if (search_item === "") {
+    res.status(404).json({ message: "Error: Item not found" });
+  } else {
+    osge
+      .find({ name: { $regex: search_item, $options: "i" } })
+      .then(data =>
+        axios
+          .get(base_url + data[0].id)
+          .then(item => res.status(200).json(item.data))
+      )
+      .catch(err => {
+        if (err) {
+          res.status(404).json({ message: "Error: Item not found." });
+        }
+      });
+  }
 });
 
 mongoose.connect(
@@ -47,4 +51,5 @@ mongoose.connect(
 mongoose.connection.on("error", err =>
   console.log("Error connecting to MongoDB")
 );
-app.listen(PORT, () => console.log(`App running on port ${PORT}`));
+
+module.exports = app;
